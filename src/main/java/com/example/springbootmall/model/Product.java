@@ -1,5 +1,6 @@
 package com.example.springbootmall.model;
 
+import com.example.springbootmall.constant.ProductCategory;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -9,7 +10,7 @@ public class Product {
 
     Integer productId;
     String productName;
-    String category;
+    ProductCategory category;
     String imageUrl;
     Integer price;
     Integer stock;
@@ -33,11 +34,11 @@ public class Product {
         this.productName = productName;
     }
 
-    public String getCategory() {
+    public ProductCategory getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(ProductCategory category) {
         this.category = category;
     }
 
