@@ -2,7 +2,11 @@ package com.example.springbootmall.dao.impl;
 
 import com.example.springbootmall.dao.OrderDao;
 import com.example.springbootmall.dto.CreateOrderRequest;
+import com.example.springbootmall.model.Order;
 import com.example.springbootmall.model.OrderItem;
+import com.example.springbootmall.rowmapper.OrderItemRowMapper;
+import com.example.springbootmall.rowmapper.OrderRowMapper;
+import com.example.springbootmall.rowmapper.ProductRowMapper;
 import org.apache.catalina.util.ParameterMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -22,6 +26,39 @@ public class OrderDaoImpl implements OrderDao {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+        String sql = "select order_id, user_id, total_amount, created_date, last_modified_date" +
+                " from `order` where order_id =:orderId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderId", orderId);
+
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+
+        if (!orderList.isEmpty()) {
+            return orderList.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<OrderItem> getOrderItemsById(Integer orderId) {
+        String sql = "select oi.order_item_id, oi.order_id, oi.product_id, oi.quantity, oi.amount, p.product_name, p.image_url " +
+                " from order_item as oi " +
+                " left join product as p on oi.product_id = p.product_id" +
+                " where order_id =:orderId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderId", orderId);
+
+        List<OrderItem> orderItemList = namedParameterJdbcTemplate.query(sql, map, new OrderItemRowMapper());
+
+        return orderItemList;
+
+    }
 
     @Override
     public Integer createOrder(Integer userId, Integer totalAmount) {
